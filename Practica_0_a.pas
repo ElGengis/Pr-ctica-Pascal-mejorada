@@ -1,0 +1,100 @@
+PROGRAM Principal;
+USES Empleado,Empleados;
+VAR
+	empleados:TListaEmpleados;
+	n,num:INTEGER;
+
+PROCEDURE CrearEmpleadoE (VAR e:TListaEmpleados);
+VAR
+	aux:TEmpleado;
+	n:STRING;
+	ed:INTEGER;
+	s:REAL;
+BEGIN
+	writeln('Introduce Nombre del empleado: ');
+	readln(n);
+	writeln('Introduce edad: ');
+	readln(ed);
+	writeln('Introduce Sueldo: ');
+	readln(s);
+	CrearEmpleado(aux,n,ed,s);
+	if ed>=16 then
+		AniadirEmpleado(aux,e);
+END;
+
+PROCEDURE MostrarEmpleados(e:TListaEmpleados);
+VAR
+	aux:TListaEmpleados;
+BEGIN
+	aux:=e;
+	WHILE aux<>NIL DO BEGIN
+		writeln(NombreEmpleado(aux^.empleado));
+		writeln(EdadEmpleado(aux^.empleado));
+		writeln(SueldoEmpleado(aux^.empleado):2:3);
+		aux:=aux^.sig;
+	END;
+END;
+
+PROCEDURE OrdenarEmpleados(e:TListaEmpleados);
+VAR
+	aux:TListaEmpleados;
+BEGIN
+	aux:=e;
+END;
+
+PROCEDURE EliminarEmpleados(VAR e:TListaEmpleados; n:INTEGER);
+VAR
+	aux,auxExp,auxAnt:TListaEmpleados;
+BEGIN
+	aux:=e;
+	auxExp:=aux^.sig;
+	auxAnt:=NIL;
+	WHILE auxExp<>NIL DO BEGIN
+		IF (auxExp^.empleado.sueldo>n)THEN BEGIN
+			IF (auxAnt=NIL) THEN BEGIN
+				auxAnt:=e;
+				e:=e^.sig;
+				aux:=aux^.sig;
+				auxExp:=auxExp^.sig;
+				dispose(auxAnt);
+				auxAnt:=NIL;
+			END
+			ELSE BEGIN
+				auxAnt:=auxExp;
+				aux:=aux^.sig;
+				auxExp:=auxExp^.sig;
+				dispose(auxAnt);
+				auxAnt:=NIL;
+			END;
+		END
+		ELSE BEGIN
+			auxAnt:=aux;
+			aux:=aux^.sig;
+			auxExp:=auxExp^.sig;
+		END;
+	END;
+END;
+
+BEGIN
+	CrearListaEmpleadosVacia(empleados);
+	REPEAT
+		writeln('1) Crear Empleado');
+		writeln('2) Mostrar listado de empleados');
+		writeln('3) Ordenar empleados por sueldo');
+		writeln('4) Eliminar empleados que superen el sueldo determinado');
+		writeln('5) Cerrar programa');
+		writeln('Introduce opción');
+		readln(n);
+		CASE n OF
+			1: CrearEmpleadoE(empleados);
+			2: MostrarEmpleados(empleados);
+			3: OrdenarEmpleados(empleados);
+			4: BEGIN
+				writeln('Introduce un salarario tope');
+				readln(num);
+				EliminarEmpleados(empleados,num);
+			END;
+			5: writeln('Fin');
+		END;
+	UNTIL (n=5)
+END.
